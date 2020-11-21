@@ -68,6 +68,33 @@ class TopologicalAutoencoderLoss(BaseTopologicalLayer):
         return data_loss + latent_loss
 
 
+class TopologicallyDenseRegularization(BaseTopologicalLayer):
+    def __init__(self, beta, inner_batch_size, num_classes, numpy=True):
+        super().__init__(numpy=numpy)
+        self.beta = beta
+        self.inner_batch_size = inner_batch_size
+        self.num_classes = num_classes
+
+    def build(self, input_shape):
+        if not self.numpy:
+            if input_shape[0] is None:
+                raise ValueError("Batch size should be specified when running with numpy=False")
+            assert input_shape[0] / self.num_classes == self.inner_batch_size
+            self.components = tf.Variable(
+                tf.range(self.inner_batch_size), trainable=False, name="components"
+            )
+
+    def call(self, features):
+        loss = 0
+        for i in range(self.num_classes):
+            distances = _get_distance_matrix(
+                features[i * self.inner_batch_size : (i + 1) * self.inner_batch_size]
+            )
+            edges = self.get_edges(tf.stop_gradient(distances))
+            loss += tf.losses.mean_absolute_error(tf.gather_nd(features, edges), self.beta)
+        return loss
+
+
 def _get_distance_matrix(vertices: tf.Tensor) -> tf.Tensor:
     return tf.norm(tf.expand_dims(vertices, axis=0) - tf.expand_dims(vertices, axis=1), axis=-1)
 
