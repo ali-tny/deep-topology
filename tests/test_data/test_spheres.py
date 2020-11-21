@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from topo_ae.data import spheres
+from deep_topology.data import spheres
 
 
 def test_spheres():

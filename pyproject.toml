@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "topo_ae"
+name = "deep_topology"
 version = "0.1.0"
-description = "Tensorflow implementation of Topological Autoencoders (ICML 2020)"
+description = "Tensorflow implementation of topological deep learning papers"
 authors = ["ali-tny <aliteeney@googlemail.com>"]
 
 [tool.poetry.dependencies]

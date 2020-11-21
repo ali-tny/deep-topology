@@ -2,7 +2,7 @@ import pytest
 import tensorflow as tf
 import numpy as np
 
-from topo_ae import topology_np, topology_tf
+from deep_topology import topology_np, topology_tf
 
 
 @pytest.mark.parametrize("num_vertices", [8, 16, 32])
